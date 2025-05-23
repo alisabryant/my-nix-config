@@ -1,0 +1,12 @@
+# Nix build result symlinks
+result
+result-*
+
+# Editor temporary/backup files
+*~
+*.swp
+*.swo
+*.bak
+
+# macOS specific
+.DS_Store
