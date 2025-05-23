@@ -83,15 +83,18 @@ in
     chosenBrowserPkg
   ];
 
-  programs.git = { # Basic Git client configuration
+
+  programs.git = {
     enable = true;
-    userName = "Alyssa Feola";
-    userEmail = "alyssa@seventeensierra.com";
+    userName = "its-a-lisa"; 
+    userEmail = "5581330+its-a-lisa@users.noreply.github.com"; 
+
+    
     extraConfig = {
+      core.editor = "gedit"; 
       init.defaultBranch = "main";
-      core.editor = "vim"; # Or "codium --wait"
-      pull.rebase = true;
-    };
+      github.user = "its-a-lisa"; 
+     };
   };
 
   programs.direnv.enable = true; # Enabled as it's a core dev utility
