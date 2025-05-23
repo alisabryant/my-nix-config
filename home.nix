@@ -91,7 +91,7 @@ in
 
     
     extraConfig = {
-      core.editor = "gedit"; 
+      core.editor = "codium --wait"; 
       init.defaultBranch = "main";
       github.user = "its-a-lisa"; 
      };
