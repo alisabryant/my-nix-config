@@ -81,6 +81,9 @@ in
 
     # Browser
     chosenBrowserPkg
+
+    # Node packages
+    nodePackages.http-server
   ];
 
 
