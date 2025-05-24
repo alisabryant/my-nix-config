@@ -10,13 +10,13 @@
     };
   };
 
-   outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       system = "aarch64-linux"; # Your system architecture
       pkgs = nixpkgs.legacyPackages.${system}; # Define pkgs once
     in
     {
-      # Your existing Home Manager configuration (provides global psql v15)
+      # Your existing Home Manager configuration
       homeConfigurations."localhost" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs; 
         extraSpecialArgs = {
@@ -26,36 +26,46 @@
           inputs = inputs; 
         };
         modules = [
-          ./home.nix                         # Main minimal configuration
-          ./modules/mac-like-look.nix        # For GTK/Icon themes
-          ./modules/dracula-theme.nix        # For Vim/Terminal Dracula theming
-          ./modules/plasmic-dev-env.nix      # Module for Plasmic project tools
-          ./modules/extras-and-later.nix     # Module for extra tools and items to revisit
+          ./home.nix
+          ./modules/mac-like-look.nix
+          ./modules/dracula-theme.nix
+          ./modules/plasmic-dev-env.nix
+          ./modules/extras-and-later.nix
         ];
       };
 
-      devShells.${system}.plasmic = pkgs.mkShell {
-        name = "plasmic-project-shell";
-        
-        # Packages specifically for the Plasmic project development environment
-        packages = [
-          pkgs.postgresql_13  
-          pkgs.nodejs-18_x 
-        ];
+      # Define devShells explicitly
+      devShells = {
+        "${system}" = { # Key for your system, e.g., "aarch64-linux"
+          plasmic = pkgs.mkShell {
+            name = "plasmic-project-shell";
+            packages = [
+              pkgs.postgresql_15  # Or your chosen PG version
+              pkgs.nodejs-18_x    # For Node.js 18.x
+              pkgs.python310      # For Python 3.10.x
+              pkgs.python310Packages.pip # Pip for Python 3.10
+              pkgs.pre-commit     # For git hooks
+              # You can add more dev tools here if needed, e.g.:
+              # pkgs.gcc 
+              # pkgs.gnumake
+            ];
+            shellHook = ''
+              echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
+              echo "Node:       $(node --version || echo 'Node not found')"
+              echo "Python:     $(python --version || echo 'Python not found')"
+              echo "Pip:        $(pip --version || echo 'pip not found')"
+              echo "psql:       $(psql --version || echo 'psql not found')"
+              echo "pre-commit: $(pre-commit --version || echo 'pre-commit not found')"
+              echo "---------------------------------------------------------------------"
+            '';
+          };
 
-        # Optional: You can set environment variables or run commands when entering the shell
-        # shellHook = ''
-        #   echo "Entered Plasmic project dev shell (psql from postgresql_13 should be active)."
-        #   export PS1="[plasmic-dev] ${PS1}"
-        # '';
-      };
-
-      # 
-      devShells.${system}.default = pkgs.mkShell {
-         name = "nix-config-management-shell";
-         packages = [ pkgs.git ];
-      };
-
-    };
+          default = pkgs.mkShell {
+            name = "nix-config-management-shell";
+            packages = [ pkgs.git ];
+          };
+        }; # End of "${system}" block
+      }; # End of devShells
+    }; # End of outputs
 }
 
