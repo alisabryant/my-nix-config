@@ -5,7 +5,6 @@
 {
   home.packages = with pkgs; [
     # JavaScript/TypeScript Development Environment (Core for Plasmic)
-    nodejs_22   # Includes npm and npx
     yarn
     pnpm
     dart-sass   # For sass CLI, used by project scripts
@@ -19,9 +18,6 @@
     # Rust Development Environment (Plasmic has Rust components)
     rustup      # Rust toolchain manager
     protobuf    # Protocol Buffer compiler
-
-    # Python (May be used by some project scripts or dependencies)
-    python3
 
     # Node.js Global Tools (Potentially used by Plasmic's dev scripts)
     nodePackages.concurrently

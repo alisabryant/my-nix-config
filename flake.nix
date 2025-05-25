@@ -45,20 +45,24 @@
               pkgs.python310      # For Python 3.10.x
               pkgs.python310Packages.pip # Pip for Python 3.10
               pkgs.pre-commit     # For git hooks
+              pkgs.nodePackages.http-server
+              pkgs.rsbuild
               # You can add more dev tools here if needed, e.g.:
               # pkgs.gcc 
               # pkgs.gnumake
             ];
-            shellHook = ''
-              echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
-              echo "Node:       $(node --version || echo 'Node not found')"
-              echo "Python:     $(python --version || echo 'Python not found')"
-              echo "Pip:        $(pip --version || echo 'pip not found')"
-              echo "psql:       $(psql --version || echo 'psql not found')"
-              echo "pre-commit: $(pre-commit --version || echo 'pre-commit not found')"
-              echo "---------------------------------------------------------------------"
-            '';
-          };
+                shellHook = ''
+                  echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
+                  echo "Node:       $(node --version || echo 'Node not found')"
+                  echo "Python:     $(python --version || echo 'Python not found')"
+                  echo "Pip:        $(pip --version || echo 'pip not found')"
+                  echo "psql:       $(psql --version || echo 'psql not found')"
+                  echo "pre-commit: $(pre-commit --version || echo 'pre-commit not found')"
+                  echo "http-server:$(http-server --version || echo 'http-server not found')" # Added for check
+                  echo "rsbuild:    $(rsbuild --version || echo 'rsbuild not found')"     # Added for check
+                  echo "---------------------------------------------------------------------"
+                '';
+              };
 
           default = pkgs.mkShell {
             name = "nix-config-management-shell";
