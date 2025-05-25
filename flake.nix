@@ -53,8 +53,10 @@
             ];
             shellHook = ''
               echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
+              # Export path to Nix Node.js v18
+              export PLASMIC_NIX_NODE_PATH="${pkgs.nodejs-18_x}/bin/node"
               # Ensure Nix-provided tools are first in PATH
-              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:$PATH"
+              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:$PATH
 
               # For rsbuild installed via yarn global add
               YARN_GLOBAL_BIN_DIR=$(yarn global bin 2>/dev/null)
