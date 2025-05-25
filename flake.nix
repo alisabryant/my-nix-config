@@ -58,13 +58,22 @@
               echo "Pip:        $(pip --version || echo 'pip not found')"
               echo "psql:       $(psql --version || echo 'psql not found')"
               echo "pre-commit: $(pre-commit --version || echo 'pre-commit not found')"
-              echo "http-server:$(http-server --version || echo 'http-server not found')" # Added for check
+              echo "http-server:$(http-server --version || echo 'http-server not found')" 
+              
+              # For rsbuild installed via yarn global add
+              YARN_GLOBAL_BIN_DIR=$(yarn global bin 2>/dev/null)
+              if [ -n "$YARN_GLOBAL_BIN_DIR" ] && [ -d "$YARN_GLOBAL_BIN_DIR" ]; then
+                export PATH="$YARN_GLOBAL_BIN_DIR:$PATH"
+                echo "Yarn global bin added to PATH: $YARN_GLOBAL_BIN_DIR"
+                echo "rsbuild:     $(rsbuild --version || echo 'rsbuild not found in Yarn global bin')"
+              else
+                echo "NOTE: Yarn global bin not found. 'rsbuild' may need to be installed via 'yarn global add @rsbuild/core'."
+              fi
               echo "---------------------------------------------------------------------"
-              echo "NOTE: 'rsbuild' will need to be installed via npm if required by yarn dev."
-              echo "Try: npm install -g @rsbuild/core @rsbuild/cli"
-              echo "Then: export PATH=\"$(npm prefix -g)/bin:\$PATH\""
-              echo "---------------------------------------------------------------------"
+              echo "Current PATH head: $(echo $PATH | cut -d: -f1-5)" # Shows first 5 PATH entries
             '';
+
+
               };
 
           default = pkgs.mkShell {
