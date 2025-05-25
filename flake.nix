@@ -53,24 +53,34 @@
             ];
             shellHook = ''
               echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
-              echo "Node:       $(node --version || echo 'Node not found')"
-              echo "Python:     $(python --version || echo 'Python not found')"
-              echo "Pip:        $(pip --version || echo 'pip not found')"
-              echo "psql:       $(psql --version || echo 'psql not found')"
-              echo "pre-commit: $(pre-commit --version || echo 'pre-commit not found')"
-              echo "http-server:$(http-server --version || echo 'http-server not found')" 
-              
+              # Ensure Nix-provided tools are first in PATH
+              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:$PATH"
+
               # For rsbuild installed via yarn global add
               YARN_GLOBAL_BIN_DIR=$(yarn global bin 2>/dev/null)
               if [ -n "$YARN_GLOBAL_BIN_DIR" ] && [ -d "$YARN_GLOBAL_BIN_DIR" ]; then
                 export PATH="$YARN_GLOBAL_BIN_DIR:$PATH"
                 echo "Yarn global bin added to PATH: $YARN_GLOBAL_BIN_DIR"
-                echo "rsbuild:     $(rsbuild --version || echo 'rsbuild not found in Yarn global bin')"
               else
                 echo "NOTE: Yarn global bin not found. 'rsbuild' may need to be installed via 'yarn global add @rsbuild/core'."
               fi
+
+              echo "Node:        $(node --version || echo 'Node not found')"
+              echo "Npm:         $(npm --version || echo 'Npm not found')"
+              echo "Python:      $(python --version || echo 'Python not found')"
+              echo "Pip:         $(pip --version || echo 'pip not found')"
+              echo "psql:        $(psql --version || echo 'psql not found')"
+              echo "pre-commit:  $(pre-commit --version || echo 'pre-commit not found')"
+              echo "http-server: $(http-server --version || echo 'http-server not found')"
+              echo "rsbuild:     $(rsbuild --version || echo 'rsbuild not found')"
               echo "---------------------------------------------------------------------"
-              echo "Current PATH head: $(echo $PATH | cut -d: -f1-5)" # Shows first 5 PATH entries
+              echo "Verifying critical paths:"
+              echo "which node: $(which node || echo 'node not found')"
+              echo "which python: $(which python || echo 'python not found')"
+              echo "which http-server: $(which http-server || echo 'http-server not found')"
+              echo "which rsbuild: $(which rsbuild || echo 'rsbuild not found')"
+              echo "Initial PATH head: $(echo $PATH | cut -d: -f1-7)"
+              echo "---------------------------------------------------------------------"
             '';
 
 
