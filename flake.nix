@@ -46,7 +46,7 @@
               pkgs.python310Packages.pip # Pip for Python 3.10
               pkgs.pre-commit     # For git hooks
               pkgs.nodePackages.http-server
-              pkgs.rsbuild
+              # pkgs.rsbuild
               # You can add more dev tools here if needed, e.g.:
               # pkgs.gcc 
               # pkgs.gnumake
