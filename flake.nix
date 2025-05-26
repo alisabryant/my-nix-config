@@ -1,6 +1,6 @@
 # ~/nix-config/flake.nix
 {
-  description = "Home Manager configuration for alyssa on localhost";
+  description = "Home Manager configuration for alice on localhost";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
@@ -20,8 +20,8 @@
         inherit pkgs; 
         extraSpecialArgs = {
           inherit system;
-          username = "alyssa";
-          homeDirectory = "/home/alyssa";
+          username = "alice";
+          homeDirectory = "/home/alice";
           inputs = inputs; 
         };
         modules = [
@@ -45,7 +45,7 @@
               pkgs.python310Packages.pip
               pkgs.pre-commit
               pkgs.nodePackages.http-server
-              pkgs.rsbuild  # Attempting to use the Nix package for rsbuild
+              # pkgs.rsbuild 
             ];
             shellHook = ''
               echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
