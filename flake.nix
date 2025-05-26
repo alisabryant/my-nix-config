@@ -16,13 +16,12 @@
       pkgs = nixpkgs.legacyPackages.${system}; # Define pkgs once
     in
     {
-      # Your existing Home Manager configuration
       homeConfigurations."localhost" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs; 
         extraSpecialArgs = {
           inherit system;
-          username = "alyssa"; # Your username
-          homeDirectory = "/home/alyssa"; # Your home directory
+          username = "alyssa";
+          homeDirectory = "/home/alyssa";
           inputs = inputs; 
         };
         modules = [
@@ -34,64 +33,56 @@
         ];
       };
 
-      # Define devShells explicitly
       devShells = {
-        "${system}" = { # Key for your system, e.g., "aarch64-linux"
+        "${system}" = {
           plasmic = pkgs.mkShell {
             name = "plasmic-project-shell";
             packages = [
-              pkgs.postgresql_15  # Or your chosen PG version
-              pkgs.nodejs-18_x    # For Node.js 18.x
-              pkgs.python310      # For Python 3.10.x
-              pkgs.python310Packages.pip # Pip for Python 3.10
-              pkgs.pre-commit     # For git hooks
+              pkgs.postgresql_15
+              pkgs.nodejs-18_x  # Includes npm
+              pkgs.yarn
+              pkgs.python310
+              pkgs.python310Packages.pip
+              pkgs.pre-commit
               pkgs.nodePackages.http-server
-              # pkgs.rsbuild
-              # You can add more dev tools here if needed, e.g.:
-              # pkgs.gcc 
-              # pkgs.gnumake
+              pkgs.rsbuild  # Attempting to use the Nix package for rsbuild
             ];
-# In ~/my-nix-config/flake.nix, inside devShells."${system}".plasmic
-# ...
             shellHook = ''
               echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
-              # Ensure Nix-provided tools are first in PATH for this shell
-              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:$PATH"
               
-              # Export PLASMIC_NIX_NODE_PATH for run.bash
+              # Ensure Nix-provided tools are prioritized in PATH
+              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.yarn}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:${pkgs.rsbuild}/bin:$PATH" 
+              
+              # Export PLASMIC_NIX_NODE_PATH for run.bash script
               export PLASMIC_NIX_NODE_PATH="${pkgs.nodejs-18_x}/bin/node"
 
-              # For rsbuild installed via yarn global add
-              YARN_GLOBAL_BIN_DIR=$(yarn global bin 2>/dev/null) # Get yarn global bin dir
+              # Add yarn global bin to PATH for any tools installed that way
+              YARN_GLOBAL_BIN_DIR=$(yarn global bin 2>/dev/null)
               if [ -n "$YARN_GLOBAL_BIN_DIR" ] && [ -d "$YARN_GLOBAL_BIN_DIR" ]; then
-                export PATH="$YARN_GLOBAL_BIN_DIR:$PATH" # Prepend it to PATH
+                export PATH="$YARN_GLOBAL_BIN_DIR:$PATH" 
                 echo "Yarn global bin added to PATH: $YARN_GLOBAL_BIN_DIR"
-                # Now try to get rsbuild version AFTER updating PATH
-                RSBUILD_VERSION_OUTPUT=$(rsbuild --version 2>&1 || echo "rsbuild not found by hook after PATH export")
-                echo "rsbuild (hook check): $RSBUILD_VERSION_OUTPUT"
-              else
-                echo "NOTE: Yarn global bin directory not found. 'rsbuild' might need 'yarn global add @rsbuild/core'."
-                echo "rsbuild (hook check): not found (yarn global bin dir issue)"
               fi
 
+              echo "--- Versions provided by environment ---"
               echo "Node:        $(node --version || echo 'Node not found')"
               echo "Npm:         $(npm --version || echo 'Npm not found')"
+              echo "Yarn:        $(yarn --version || echo 'Yarn not found')"
               echo "Python:      $(python --version || echo 'Python not found')"
               echo "Pip:         $(pip --version || echo 'pip not found')"
               echo "psql:        $(psql --version || echo 'psql not found')"
               echo "pre-commit:  $(pre-commit --version || echo 'pre-commit not found')"
               echo "http-server: $(http-server --version || echo 'http-server not found')"
+              echo "rsbuild:     $(rsbuild --version 2>&1 || echo 'rsbuild not found in PATH by hook')"
               echo "PLASMIC_NIX_NODE_PATH is set to: $PLASMIC_NIX_NODE_PATH"
               echo "---------------------------------------------------------------------"
               echo "Verifying critical paths from interactive shell's perspective (after hook):"
               echo "which node: $(which node || echo 'node not found')"
               echo "which python: $(which python || echo 'python not found')"
-              echo "which http-server: $(which http-server || echo 'http-server not found')"
-              echo "which rsbuild: $(which rsbuild || echo 'rsbuild not found')" # This will reflect the PATH set by this hook
-              echo "Current PATH head: $(echo $PATH | cut -d: -f1-7)"
+              echo "which rsbuild: $(which rsbuild || echo 'rsbuild not found in PATH')"
+              echo "Current PATH head (first ~7 entries): $(echo $PATH | cut -d: -f1-7)"
               echo "---------------------------------------------------------------------"
             '';
-# ...
+          };
 
           default = pkgs.mkShell {
             name = "nix-config-management-shell";
@@ -100,5 +91,4 @@
         }; # End of "${system}" block
       }; # End of devShells
     }; # End of outputs
-};
 }
