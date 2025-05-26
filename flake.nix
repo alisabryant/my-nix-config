@@ -45,13 +45,12 @@
               pkgs.python310Packages.pip
               pkgs.pre-commit
               pkgs.nodePackages.http-server
-              # pkgs.rsbuild 
             ];
             shellHook = ''
               echo "--- Entered Plasmic Dev Shell (Node 18, Python 3.10, PostgreSQL 15) ---"
               
               # Ensure Nix-provided tools are prioritized in PATH
-              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.yarn}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:${pkgs.rsbuild}/bin:$PATH" 
+              export PATH="${pkgs.nodejs-18_x}/bin:${pkgs.yarn}/bin:${pkgs.python310}/bin:${pkgs.python310Packages.pip}/bin:${pkgs.pre-commit}/bin:${pkgs.nodePackages.http-server}/bin:${pkgs.postgresql_15}/bin:$PATH" 
               
               # Export PLASMIC_NIX_NODE_PATH for run.bash script
               export PLASMIC_NIX_NODE_PATH="${pkgs.nodejs-18_x}/bin/node"
