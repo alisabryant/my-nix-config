@@ -59,10 +59,10 @@ sudo mv /etc/bashrc.backup-before-nix /etc/bashrc.backup-before-nix.veryold
 - Initialize and Enable Nix Daemon Services (after installer has run and nix.conf is set): The Nix installer should set up the service files. Ensure systemd is aware of them and they are running and enabled:
 
    ```bash
-      sudo systemctl daemon-reload         # Important: Make systemd re-read unit files
-      sudo systemctl enable --now nix-daemon.socket # Enable and start the socket
-      sudo systemctl enable nix-daemon.service  # Ensure service is enabled (usually handled by socket)
-      sudo systemctl start nix-daemon.socket    # Ensure socket is listening (if --now didn't cover it)
+      sudo systemctl daemon-reload
+      sudo systemctl enable --now nix-daemon.socket
+      sudo systemctl enable nix-daemon.service
+      sudo systemctl start nix-daemon.socket
       # Verify status:
       sudo systemctl status nix-daemon.socket nix-daemon.service 
       # Expect socket: active (listening), service: active (running) or inactive (dead) but ready to be triggered by socket.
