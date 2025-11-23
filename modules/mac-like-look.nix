@@ -8,7 +8,8 @@ let
   iconThemeName = "Qogir";
   cursorThemePackage = pkgs.bibata-cursors;
   cursorThemeName = "Bibata-Modern-Ice";
-in {
+in
+lib.mkIf pkgs.stdenv.isLinux {
   home.packages = with pkgs; [
     inter # SF Pro replacement
     (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "IntelOneMono" ]; })
@@ -39,4 +40,3 @@ in {
 
   # TODO: GNOME Shell theming and extensions to be configured later
 }
-

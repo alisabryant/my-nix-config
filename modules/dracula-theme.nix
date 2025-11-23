@@ -53,42 +53,31 @@ let
   profilePath = "org/gnome/terminal/legacy/profiles:/:${defaultProfileId}";
 
 in
-{
-  # Remove or comment out the previous placeholder comments for GNOME Terminal
-  # # GNOME Terminal theming to be revisited (manual config for now)
-  # # The direct profile configuration was causing issues.
+lib.mkMerge [
+  # This block will only be applied on Linux systems.
+  (lib.mkIf pkgs.stdenv.isLinux {
+    dconf.settings = {
+      # Settings for your specific GNOME Terminal profile
+      "${profilePath}" = {
+        visible-name = "Dracula (Nix Managed)"; # Optional: set a profile name
+        use-theme-colors = false; # Crucial: use custom colors, not system theme
+        background-color = draculaBackground;
+        foreground-color = draculaForeground;
+        
+        # Cursor colors
+        cursor-background-color = draculaPink;
 
-  dconf.settings = {
-    # Settings for your specific GNOME Terminal profile
-    "${profilePath}" = {
-      visible-name = "Dracula (Nix Managed)"; # Optional: set a profile name
-      use-theme-colors = false; # Crucial: use custom colors, not system theme
-      background-color = draculaBackground;
-      foreground-color = draculaForeground;
-      
-      # For bold text, GNOME Terminal often uses the bright variant from the palette
-      # or a specific "bold-color" if the theme doesn't rely on palette for bold.
-      # If there's a specific "bold-color" dconf key and you want it different
-      # from foreground, set it here. Otherwise, bold often uses bright palette colors.
-      # bold-color = draculaForeground; # Or "#FFFFFF" for brighter bold
+        # Selection/Highlight colors
+        highlight-background-color = draculaCurrentLine;
 
-      # Cursor colors
-      cursor-background-color = draculaPink; # Or another contrasting color
-      # cursor-foreground-color = draculaBackground; # Text color under cursor block
-
-      # Selection/Highlight colors
-      highlight-background-color = draculaCurrentLine; # Using CurrentLine for selection BG
-      # highlight-foreground-color = draculaForeground; # Text color when selected
-
-      # The 16-color palette
-      palette = gnomePalette;
-
-      # Optional: Transparency (0-100 for percent)
-      # use-transparent-background = true;
-      # background-transparency-percent = 10; # Example: 10% transparent
+        # The 16-color palette
+        palette = gnomePalette;
+      };
     };
-  };
-
+  })
+  
+  # This block will be applied on ALL systems (Linux and macOS).
+  {
   programs.vim = {
     plugins = [ pkgs.vimPlugins.vim-dracula ];
     extraConfig = ''
@@ -101,4 +90,5 @@ in
       silent! colorscheme dracula
     '';
   };
-}
+  }
+]

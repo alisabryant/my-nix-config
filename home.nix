@@ -56,7 +56,6 @@ in
     jq
     wget
     curl
-    gnome.gnome-tweaks
 
     # Build Essentials (general purpose, also used by project module)
     gnumake
@@ -84,7 +83,9 @@ in
 
     # Node packages
     nodePackages.http-server
-  ];
+  ] ++ (lib.optionals pkgs.stdenv.isLinux [ # Linux-only packages
+    gnome.gnome-tweaks
+  ]);
 
 
   programs.git = {
@@ -110,11 +111,13 @@ in
       "google-chrome" # For the browser logic
     ];
 
-  xdg.mimeApps.defaultApplications = {
-    "text/html" = chosenBrowserDesktopFile;
-    "x-scheme-handler/http" = chosenBrowserDesktopFile;
-    "x-scheme-handler/https" = chosenBrowserDesktopFile;
-    "x-scheme-handler/about" = chosenBrowserDesktopFile;
+  # xdg.mimeApps is a Linux-specific setting
+  xdg = lib.mkIf pkgs.stdenv.isLinux {
+    mimeApps.defaultApplications = {
+      "text/html" = chosenBrowserDesktopFile;
+      "x-scheme-handler/http" = chosenBrowserDesktopFile;
+      "x-scheme-handler/https" = chosenBrowserDesktopFile;
+      "x-scheme-handler/about" = chosenBrowserDesktopFile;
+    };
   };
 }
-

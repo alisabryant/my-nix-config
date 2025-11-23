@@ -12,7 +12,7 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      system = "aarch64-darwin"; # System for Apple Silicon Mac
+      system = "aarch64-darwin"; # This will be the system you build for
       pkgs = nixpkgs.legacyPackages.${system}; # Define pkgs once
     in
     {
@@ -26,10 +26,10 @@
         };
         modules = [
           ./home.nix
-          ./modules/mac-like-look.nix
-          ./modules/dracula-theme.nix
-          ./modules/plasmic-dev-env.nix
-          ./modules/extras-and-later.nix
+          (import ./modules/mac-like-look.nix)
+          (import ./modules/dracula-theme.nix)
+          (import ./modules/plasmic-dev-env.nix)
+          (import ./modules/extras-and-later.nix)
         ];
       };
 
