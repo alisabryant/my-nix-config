@@ -12,16 +12,16 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      system = "aarch64-linux"; # Your system architecture
+      system = "aarch64-darwin"; # System for Apple Silicon Mac
       pkgs = nixpkgs.legacyPackages.${system}; # Define pkgs once
     in
     {
-      homeConfigurations."localhost" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations."airalyssa@Airalyssas-MacBook-Air.local" = home-manager.lib.homeManagerConfiguration {
         inherit pkgs; 
         extraSpecialArgs = {
           inherit system;
-          username = "alice";
-          homeDirectory = "/home/alice";
+          username = "airalyssa";
+          homeDirectory = "/Users/airalyssa";
           inputs = inputs; 
         };
         modules = [
